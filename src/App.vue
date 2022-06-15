@@ -1,7 +1,7 @@
 <template>
-  <div class="post">
-    <div>Название:<strong>Пост о JS</strong></div>
-    <div>Описание:<strong>Универсальный язык программирования</strong></div>
+  <div v-for="post in posts" key="post.id" class="post">
+    <div>Название: <strong>{{post.title}}</strong></div>
+    <div>Описание: <strong>{{post.text}}</strong></div>
   </div>
 
 </template>
@@ -9,8 +9,12 @@
 export default {
   data(){
     return{
-      likes: 0,
-      dislikes: 0
+      posts:[
+        {id:1, title: '1Javascript', text: '1Универсальный язык программирования'},
+        {id:2, title: '2Javascript', text: '2Универсальный язык программирования'},
+        {id:3, title: '3Javascript', text: '3Универсальный язык программирования'},
+        {id:3, title: '4Javascript', text: '4Универсальный язык программирования'}
+      ]
     }
   },
   methods:{

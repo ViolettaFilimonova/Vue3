@@ -1,9 +1,9 @@
 <template>
-  <h1>Test</h1>
-  <button @click="addLike">likes</button>
-  <button @click="addDislike">dislikes</button>
-  <p>Likes: {{likes}}</p>
-  <p>Dislikes: {{dislikes}}</p>
+  <div class="post">
+    <div>Название:<strong>Пост о JS</strong></div>
+    <div>Описание:<strong>Универсальный язык программирования</strong></div>
+  </div>
+
 </template>
 <script>
 export default {
@@ -23,6 +23,15 @@ export default {
   }
 }
 </script>
-<style>
-
+<style scoped>
+  *{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  .post{
+    border: 2px solid teal;
+    padding: 15px;
+    margin: 20px;
+  }
 </style>

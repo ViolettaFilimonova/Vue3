@@ -1,7 +1,7 @@
 <template>
 <div>
-  <post-form/>
-  <post-list/>
+  <post-form @createP="createPost"/>
+  <post-list :posts="posts"/>
 </div>
 </template>
 <script>
@@ -9,7 +9,6 @@ import PostForm from "@/Components/PostForm";
 import PostList from "@/Components/PostList";
 export default {
   components: {PostList, PostForm},
-  props:[],
   data(){
     return{
       posts:[
@@ -18,20 +17,11 @@ export default {
         {id:3, title: '3Javascript', text: '3Универсальный язык программирования'},
         {id:3, title: '4Javascript', text: '4Универсальный язык программирования'}
       ],
-      title: '',
-      text: ''
     }
   },
   methods:{
-    createPost(e){
-      const newPost = {
-        id: Date.now(),
-        title: this.title,
-        text: this.text
-      }
-      this.posts.push(newPost)
-      this.title = ''
-      this.text = ''
+    createPost(post){
+      this.posts.push(post)
     }
   }
 }

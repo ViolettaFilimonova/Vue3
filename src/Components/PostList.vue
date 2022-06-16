@@ -7,7 +7,12 @@
 
 <script>
 export default {
-
+  name: 'PostList',
+  props:{
+    posts:{
+      type:Array,
+    }
+  }
 }
 </script>
 

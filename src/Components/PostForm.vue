@@ -2,8 +2,8 @@
   <div>
     <form @submit.prevent class="form">
       <h1 class="form__title">Создание поста</h1>
-      <input v-model="title"  class="form__input" type="text" placeholder="Название">
-      <input v-model="text"  class="form__input" type="text" placeholder="Описание">
+      <input v-model="post.title"  class="form__input" type="text" placeholder="Название">
+      <input v-model="post.text"  class="form__input" type="text" placeholder="Описание">
       <button @click="createPost" class="form__button">Создать</button>
     </form>
   </div>
@@ -11,7 +11,27 @@
 
 <script>
 export default {
-  name: 'PostForm'
+  name: 'PostForm',
+  props:{
+  },
+  data(){
+    return{
+      post:{
+        title: '',
+        text: '',
+      }
+    }
+  },
+  methods:{
+    createPost(e){
+      this.post.id =  Date.now()
+      this.$emit('createP', this.post)
+      this.post = {
+        title: '',
+        text: ''
+      }
+    }
+  }
 }
 </script>
 

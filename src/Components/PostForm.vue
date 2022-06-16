@@ -4,14 +4,16 @@
       <h1 class="form__title">Создание поста</h1>
       <input v-model="post.title"  class="form__input" type="text" placeholder="Название">
       <input v-model="post.text"  class="form__input" type="text" placeholder="Описание">
-      <button @click="createPost" class="form__button">Создать</button>
+      <my-button @click="createPost" class="form__button">Создать</my-button>
     </form>
   </div>
 </template>
 
 <script>
+import MyButton from "@/Components/UI/MyButton";
 export default {
   name: 'PostForm',
+  components: {MyButton},
   props:{
   },
   data(){
@@ -48,10 +50,6 @@ export default {
   border: 1px solid teal;
 }
 .form__button{
-  background-color: inherit;
-  border: 1px solid teal;
-  padding:10px 15px;
-  color: teal;
   align-self: flex-end;
 }
 </style>

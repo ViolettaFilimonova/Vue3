@@ -2,15 +2,17 @@
   <div>
     <form @submit.prevent class="form">
       <h1 class="form__title">Создание поста</h1>
-      <input v-model="post.title"  class="form__input" type="text" placeholder="Название">
-      <input v-model="post.text"  class="form__input" type="text" placeholder="Описание">
+      <my-input v-model="post.title"  class="form__input" type="text" placeholder="Название"/>
+      <my-input v-model="post.text"  class="form__input" type="text" placeholder="Описание"/>
       <my-button @click="createPost" class="form__button">Создать</my-button>
     </form>
   </div>
 </template>
 
 <script>
+import MyInput from './UI/MyInput.vue'
 export default {
+  components: { MyInput },
   name: 'PostForm',
   props:{
   },
@@ -41,12 +43,6 @@ export default {
   flex-direction: column;
 }
 
-.form__input{
-  width: 100%;
-  padding: 7px;
-  margin: 10px 0;
-  border: 1px solid teal;
-}
 .form__button{
   align-self: flex-end;
 }

@@ -2,7 +2,7 @@
   <div class="post">
     <div>
       <div>Название: <strong>{{post.title}}</strong></div>
-      <div>Описание: <strong>{{post.text}}</strong></div>
+      <div>Описание: <strong>{{post.body}}</strong></div>
     </div>
     <div class="post__btns">
       <my-button @click="$emit('remove', post)">Удалить</my-button>
@@ -21,7 +21,7 @@ export default {
   methods:{
   },
   mounted(){
-    console.log(this.post);
+    
   }
 }
 </script>

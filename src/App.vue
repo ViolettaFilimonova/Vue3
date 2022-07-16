@@ -11,15 +11,12 @@
 import PostForm from "@/Components/PostForm";
 import PostList from "@/Components/PostList";
 import MyDialog from "./Components/UI/MyDialog.vue";
+import axios from 'axios'
 export default {
   components: { PostList, PostForm, MyDialog },
   data(){
     return{
       posts:[
-        {id:1, title: '1Javascript', text: '1Универсальный язык программирования'},
-        {id:2, title: '2Javascript', text: '2Универсальный язык программирования'},
-        {id:3, title: '3Javascript', text: '3Универсальный язык программирования'},
-        {id:4, title: '4Javascript', text: '4Универсальный язык программирования'}
       ],
       dialogVisible: false
     }
@@ -32,12 +29,21 @@ export default {
     },
     removePost(post){
       this.posts = this.posts.filter(p => p.id !== post.id)
+    },
+    async fetchPosts(){
+      try{
+        const res = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=10')
+        this.posts = res.data
+      }catch (e){
+        console.log(e);
+      }
     }
   },
   mounted(){
-    setTimeout(() => {
-      this.dialogVisible = true
-    }, 5000)
+    // setTimeout(() => {
+    //   this.dialogVisible = true
+    // }, 5000)
+    this.fetchPosts()
   }
 }
 </script>

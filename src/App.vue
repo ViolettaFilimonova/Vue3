@@ -1,6 +1,6 @@
 <template>
 <div>
-  <my-dialog :show="true">
+  <my-dialog v-model:show="dialogVisible">
     <h2>Hi</h2>
   </my-dialog>
   <post-form @createP="createPost"/>
@@ -21,6 +21,7 @@ export default {
         {id:3, title: '3Javascript', text: '3Универсальный язык программирования'},
         {id:4, title: '4Javascript', text: '4Универсальный язык программирования'}
       ],
+      dialogVisible: false
     }
   },
   methods:{
@@ -30,6 +31,11 @@ export default {
     removePost(post){
       this.posts = this.posts.filter(p => p.id !== post.id)
     }
+  },
+  mounted(){
+    setTimeout(() => {
+      this.dialogVisible = true
+    }, 5000)
   }
 }
 </script>

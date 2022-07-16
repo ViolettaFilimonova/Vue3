@@ -5,7 +5,7 @@
       <div>Описание: <strong>{{post.text}}</strong></div>
     </div>
     <div class="post__btns">
-      <my-button>Удалить</my-button>
+      <my-button @click="$emit('remove', post)">Удалить</my-button>
     </div>
   </div>
 </template>
@@ -17,8 +17,12 @@ export default {
       type: Object,
       required: true,
     }
+  },
+  methods:{
+  },
+  mounted(){
+    console.log(this.post);
   }
-
 }
 </script>
 

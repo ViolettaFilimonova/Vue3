@@ -1,7 +1,7 @@
 <template>
 <div>
   <post-form @createP="createPost"/>
-  <post-list :posts="posts"/>
+  <post-list :posts="posts" @remove="removePost"/>
 </div>
 </template>
 <script>
@@ -15,13 +15,16 @@ export default {
         {id:1, title: '1Javascript', text: '1Универсальный язык программирования'},
         {id:2, title: '2Javascript', text: '2Универсальный язык программирования'},
         {id:3, title: '3Javascript', text: '3Универсальный язык программирования'},
-        {id:3, title: '4Javascript', text: '4Универсальный язык программирования'}
+        {id:4, title: '4Javascript', text: '4Универсальный язык программирования'}
       ],
     }
   },
   methods:{
     createPost(post){
       this.posts.push(post)
+    },
+    removePost(post){
+      this.posts = this.posts.filter(p => p.id !== post.id)
     }
   }
 }

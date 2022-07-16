@@ -63,6 +63,13 @@ export default {
     //   this.dialogVisible = true
     // }, 5000)
     this.fetchPosts()
+  },
+  watch: {
+    selectedSort(newVal){
+      this.posts.sort((post1, post2) => {
+        return post1[newVal]?.localeCompare(post2[newVal])
+      })
+    }
   }
 }
 </script>

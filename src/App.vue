@@ -1,11 +1,15 @@
 <template>
-<div>
+<div v-if="!loading">
+
   <my-dialog v-model:show="dialogVisible">
    <post-form @createP="createPost"/>
   </my-dialog>
   <post-form @createP="createPost"/>
   <post-list :posts="posts" @remove="removePost"/>
 </div>
+<div class="main" v-else > 
+    <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+  </div>
 </template>
 <script>
 import PostForm from "@/Components/PostForm";
@@ -18,7 +22,8 @@ export default {
     return{
       posts:[
       ],
-      dialogVisible: false
+      dialogVisible: false,
+      loading: false
     }
   },
   methods:{
@@ -32,11 +37,16 @@ export default {
     },
     async fetchPosts(){
       try{
-        const res = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=10')
-        this.posts = res.data
+        this.loading = true
+          const res = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=10')
+          this.posts = res.data
+          this.loading = false
       }catch (e){
         console.log(e);
       }
+      // finally{
+      //   this.loading = false
+      // }
     }
   },
   mounted(){
@@ -53,6 +63,94 @@ export default {
     padding: 0;
     box-sizing: border-box;
   }
+.main{
+  top: 0;
+  bottom: 0;
+  position: fixed;
+  left: 0;
+  right: 0;
+  display: flex;
+  position: fixed;
+}
+.lds-spinner {
+  margin: auto;
+  color: official;
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-spinner div {
+  transform-origin: 40px 40px;
+  animation: lds-spinner 1.2s linear infinite;
+}
+.lds-spinner div:after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 3px;
+  left: 37px;
+  width: 6px;
+  height: 18px;
+  border-radius: 20%;
+  background: palevioletred;
+}
+.lds-spinner div:nth-child(1) {
+  transform: rotate(0deg);
+  animation-delay: -1.1s;
+}
+.lds-spinner div:nth-child(2) {
+  transform: rotate(30deg);
+  animation-delay: -1s;
+}
+.lds-spinner div:nth-child(3) {
+  transform: rotate(60deg);
+  animation-delay: -0.9s;
+}
+.lds-spinner div:nth-child(4) {
+  transform: rotate(90deg);
+  animation-delay: -0.8s;
+}
+.lds-spinner div:nth-child(5) {
+  transform: rotate(120deg);
+  animation-delay: -0.7s;
+}
+.lds-spinner div:nth-child(6) {
+  transform: rotate(150deg);
+  animation-delay: -0.6s;
+}
+.lds-spinner div:nth-child(7) {
+  transform: rotate(180deg);
+  animation-delay: -0.5s;
+}
+.lds-spinner div:nth-child(8) {
+  transform: rotate(210deg);
+  animation-delay: -0.4s;
+}
+.lds-spinner div:nth-child(9) {
+  transform: rotate(240deg);
+  animation-delay: -0.3s;
+}
+.lds-spinner div:nth-child(10) {
+  transform: rotate(270deg);
+  animation-delay: -0.2s;
+}
+.lds-spinner div:nth-child(11) {
+  transform: rotate(300deg);
+  animation-delay: -0.1s;
+}
+.lds-spinner div:nth-child(12) {
+  transform: rotate(330deg);
+  animation-delay: 0s;
+}
+@keyframes lds-spinner {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
 
 
 </style>

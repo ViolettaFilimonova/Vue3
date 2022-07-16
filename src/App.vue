@@ -1,7 +1,7 @@
 <template>
 <div>
   <my-dialog v-model:show="dialogVisible">
-    <h2>Hi</h2>
+   <post-form @createP="createPost"/>
   </my-dialog>
   <post-form @createP="createPost"/>
   <post-list :posts="posts" @remove="removePost"/>
@@ -27,6 +27,8 @@ export default {
   methods:{
     createPost(post){
       this.posts.push(post)
+      this.dialogVisible = false
+
     },
     removePost(post){
       this.posts = this.posts.filter(p => p.id !== post.id)

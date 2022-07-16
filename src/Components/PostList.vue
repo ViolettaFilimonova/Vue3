@@ -1,5 +1,5 @@
 <template>
-  <div v-if="posts.lenght > 0">
+  <div v-if="posts.lenght !== 0">
     <h3>Список пользователей</h3>
     <post-item 
       v-for="post in posts"

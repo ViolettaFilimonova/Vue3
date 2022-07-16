@@ -1,29 +1,38 @@
 <template>
-<div v-if="!loading">
-
-  <my-dialog v-model:show="dialogVisible">
-   <post-form @createP="createPost"/>
-  </my-dialog>
+<my-dialog v-model:show="dialogVisible">
   <post-form @createP="createPost"/>
+</my-dialog>
+<div class="wrapper">
+  <div v-if="!loading">
+  <div class="app__buttons">
+    <post-form @createP="createPost"/>
+    <my-select class="app__select" :options="sortOptions" v-model="selectedSort"/>
+  </div>
   <post-list :posts="posts" @remove="removePost"/>
 </div>
 <div class="main" v-else > 
     <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-  </div>
+</div>
+</div>
 </template>
 <script>
 import PostForm from "@/Components/PostForm";
 import PostList from "@/Components/PostList";
 import MyDialog from "./Components/UI/MyDialog.vue";
 import axios from 'axios'
+import MySelect from './Components/UI/MySelect.vue'
 export default {
-  components: { PostList, PostForm, MyDialog },
+  components: { PostList, PostForm, MyDialog, MySelect },
   data(){
     return{
-      posts:[
-      ],
+      posts:[],
       dialogVisible: false,
-      loading: false
+      loading: false,
+      selectedSort: '',
+      sortOptions: [
+        {value: 'title', name: 'По названию'},
+        {value: 'body', name: 'По содержимому'}
+      ]
     }
   },
   methods:{
@@ -58,10 +67,15 @@ export default {
 }
 </script>
 <style>
-  *{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.wrapper{
+  max-width: 1200px;;
+  margin: auto;
+  padding: 15px;
   }
 .main{
   top: 0;
@@ -151,6 +165,13 @@ export default {
     opacity: 0;
   }
 }
-
+.app__buttons{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.app__select{
+  height: 50px;
+}
 
 </style>

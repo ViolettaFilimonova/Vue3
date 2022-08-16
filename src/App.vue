@@ -4,11 +4,12 @@
 </my-dialog>
 <div class="wrapper">
   <div v-if="!loading">
+    <my-input v-model="searchForm" placeholder="Поиск..."/>
   <div class="app__buttons">
     <post-form @createP="createPost"/>
     <my-select class="app__select" :options="sortOptions" v-model="selectedSort"/>
   </div>
-  <post-list :posts="posts" @remove="removePost"/>
+  <post-list :posts="sortedAndSearchedPosts" @remove="removePost"/>
 </div>
 <div class="main" v-else > 
     <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
@@ -21,14 +22,16 @@ import PostList from "@/Components/PostList";
 import MyDialog from "./Components/UI/MyDialog.vue";
 import axios from 'axios'
 import MySelect from './Components/UI/MySelect.vue'
+import MyInput from "@/Components/UI/MyInput";
 export default {
-  components: { PostList, PostForm, MyDialog, MySelect },
+  components: {MyInput, PostList, PostForm, MyDialog, MySelect },
   data(){
     return{
       posts:[],
       dialogVisible: false,
       loading: false,
       selectedSort: '',
+      searchForm: '',
       sortOptions: [
         {value: 'title', name: 'По названию'},
         {value: 'body', name: 'По содержимому'}
@@ -56,6 +59,18 @@ export default {
       // finally{
       //   this.loading = false
       // }
+    },
+  },
+  computed:{
+    sortedPosts(){
+      return [...this.posts].sort((post1, post2) => {
+        return post1[this.selectedSort]?.localeCompare(post2[this.selectedSort])
+      })
+    },
+    sortedAndSearchedPosts(){
+      return this.sortedPosts.filter(post => {
+        return post.title.toLowerCase().includes(this.searchForm.toLowerCase())
+      })
     }
   },
   mounted(){
@@ -65,12 +80,13 @@ export default {
     this.fetchPosts()
   },
   watch: {
-    selectedSort(newVal){
-      this.posts.sort((post1, post2) => {
-        return post1[newVal]?.localeCompare(post2[newVal])
-      })
-    }
-  }
+    // selectedSort(newVal){
+    //   this.posts.sort((post1, post2) => {
+    //     return post1[newVal]?.localeCompare(post2[newVal])
+    //   })
+    //
+    // }
+  },
 }
 </script>
 <style>
@@ -95,7 +111,7 @@ export default {
 }
 .lds-spinner {
   margin: auto;
-  color: official;
+  /*color: official;*/
   display: inline-block;
   position: relative;
   width: 80px;

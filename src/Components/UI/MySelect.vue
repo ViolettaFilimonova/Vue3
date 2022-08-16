@@ -21,7 +21,10 @@ export default{
         changeOption(e){
             this.$emit('update:modelValue', e.target.value)
         }
-    }
+    },
+  mounted() {
+      
+  }
 }
 </script>
 <style>

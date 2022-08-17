@@ -10,21 +10,24 @@
     <my-select class="app__select" :options="sortOptions" v-model="selectedSort"/>
   </div>
   <post-list :posts="sortedAndSearchedPosts" @remove="removePost"/>
+<!--<my-pagination  :totalPage="totalPage" :page="page" @changePage="changePage"/>-->
 </div>
 <div class="main" v-else > 
     <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 </div>
+  <div ref="observer" class="observer"></div>
 </div>
 </template>
 <script>
 import PostForm from "@/Components/PostForm";
+import MyPagination from "@/Components/UI/MyPagination"
 import PostList from "@/Components/PostList";
 import MyDialog from "./Components/UI/MyDialog.vue";
 import axios from 'axios'
 import MySelect from './Components/UI/MySelect.vue'
 import MyInput from "@/Components/UI/MyInput";
 export default {
-  components: {MyInput, PostList, PostForm, MyDialog, MySelect },
+  components: {MyInput, PostList, PostForm, MyDialog, MySelect, MyPagination },
   data(){
     return{
       posts:[],
@@ -35,7 +38,10 @@ export default {
       sortOptions: [
         {value: 'title', name: 'По названию'},
         {value: 'body', name: 'По содержимому'}
-      ]
+      ],
+      page: 1,
+      limit: 10,
+      totalPage: 0
     }
   },
   methods:{
@@ -44,13 +50,22 @@ export default {
       this.dialogVisible = false
 
     },
+    // changePage(pageNum){
+    //   this.page = pageNum
+    // },
     removePost(post){
       this.posts = this.posts.filter(p => p.id !== post.id)
     },
     async fetchPosts(){
       try{
         this.loading = true
-          const res = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=10')
+          const res = await axios.get('https://jsonplaceholder.typicode.com/posts', {
+            params:{
+              _page: this.page,
+              _limit: this.limit
+            }
+          })
+        this.totalPage = Math.ceil(res.headers['x-total-count'] / this.limit)
           this.posts = res.data
           this.loading = false
       }catch (e){
@@ -60,6 +75,21 @@ export default {
       //   this.loading = false
       // }
     },
+    async loadMorePosts() {
+      this.page += 1
+      try {
+        const res = await axios.get('https://jsonplaceholder.typicode.com/posts', {
+          params: {
+            _page: this.page,
+            _limit: this.limit
+          }
+        })
+        this.totalPage = Math.ceil(res.headers['x-total-count'] / this.limit)
+        this.posts = [...this.posts, ...res.data]
+      } catch (e) {
+        console.log(e);
+      }
+    }
   },
   computed:{
     sortedPosts(){
@@ -69,22 +99,32 @@ export default {
     },
     sortedAndSearchedPosts(){
       return this.sortedPosts.filter(post => {
-        return post.title.toLowerCase().includes(this.searchForm.toLowerCase())
+        return post.title.toLowerCase().includes(this.searchForm.toLowerCase()) ||  post.body.toLowerCase().includes(this.searchForm.toLowerCase())
       })
     }
   },
   mounted(){
+    console.log(this.$refs.observer)
+    const options = {
+
+      rootMargin: '0px',
+      threshold: 1.0
+    }
+    const callback = (entries, observer) => {
+      if (entries[0].isIntersecting && this.page < this.totalPage ){
+        this.loadMorePosts()
+      }
+    };
+    const observer = new IntersectionObserver(callback, options);
+    observer.observe(this.$refs.observer)
     // setTimeout(() => {
     //   this.dialogVisible = true
     // }, 5000)
     this.fetchPosts()
   },
   watch: {
-    // selectedSort(newVal){
-    //   this.posts.sort((post1, post2) => {
-    //     return post1[newVal]?.localeCompare(post2[newVal])
-    //   })
-    //
+    // page(){
+    //   this.fetchPosts()
     // }
   },
 }
@@ -196,5 +236,9 @@ export default {
 .app__select{
   height: 50px;
 }
-
+.observer{
+  width: 100%;
+  height: 30px;
+  background-color: darkseagreen;
+}
 </style>

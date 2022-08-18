@@ -4,7 +4,7 @@
   </my-dialog>
   <div class="wrapper">
     <div v-if="!loading">
-      <my-input v-model="searchForm" placeholder="Поиск..."/>
+      <my-input v-focus v-model="searchForm" placeholder="Поиск..."/>
       <div class="app__buttons">
         <post-form @createP="createPost"/>
         <my-select class="app__select" :options="sortOptions" v-model="selectedSort"/>
@@ -15,7 +15,7 @@
     <div class="main" v-else >
       <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
     </div>
-    <div ref="observer" class="observer"></div>
+    <div v-intersection="loadMorePosts" class="observer"></div>
   </div>
 </template>
 <script>
@@ -104,19 +104,19 @@ export default {
     }
   },
   mounted(){
-    console.log(this.$refs.observer)
-    const options = {
-
-      rootMargin: '0px',
-      threshold: 1.0
-    }
-    const callback = (entries, observer) => {
-      if (entries[0].isIntersecting && this.page < this.totalPage ){
-        this.loadMorePosts()
-      }
-    };
-    const observer = new IntersectionObserver(callback, options);
-    observer.observe(this.$refs.observer)
+    // console.log(this.$refs.observer)
+    // const options = {
+    //
+    //   rootMargin: '0px',
+    //   threshold: 1.0
+    // }
+    // const callback = (entries, observer) => {
+    //   if (entries[0].isIntersecting && this.page < this.totalPage ){
+    //     this.loadMorePosts()
+    //   }
+    // };
+    // const observer = new IntersectionObserver(callback, options);
+    // observer.observe(this.$refs.observer)
     // setTimeout(() => {
     //   this.dialogVisible = true
     // }, 5000)

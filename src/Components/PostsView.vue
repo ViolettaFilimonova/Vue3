@@ -117,9 +117,9 @@ export default {
     // };
     // const observer = new IntersectionObserver(callback, options);
     // observer.observe(this.$refs.observer)
-    // setTimeout(() => {
-    //   this.dialogVisible = true
-    // }, 5000)
+    setTimeout(() => {
+      this.dialogVisible = true
+    }, 5000)
     this.fetchPosts()
   },
   watch: {

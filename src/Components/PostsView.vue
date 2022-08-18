@@ -4,10 +4,10 @@
   </my-dialog>
   <div class="wrapper">
     <div v-if="!loading">
-      <my-input v-focus v-model="searchForm" placeholder="Поиск..."/>
+      <my-input v-focus :model-value="searchForm" @update:model-value="setSearcQuery" placeholder="Поиск..."/>
       <div class="app__buttons">
         <post-form @createP="createPost"/>
-        <my-select class="app__select" :options="sortOptions" v-model="selectedSort"/>
+        <my-select class="app__select" :options="sortOptions" :model-value="selectedSort" @update:model-value="setSelectedSort"/>
       </div>
       <post-list :posts="sortedAndSearchedPosts" @remove="removePost"/>
       <!--<my-pagination  :totalPage="totalPage" :page="page" @changePage="changePage"/>-->
@@ -23,109 +23,57 @@ import PostForm from "@/Components/PostForm";
 import MyPagination from "@/Components/UI/MyPagination"
 import PostList from "@/Components/PostList";
 import MyDialog from "@/Components/UI/MyDialog.vue";
-import axios from 'axios'
 import MySelect from '@/Components/UI/MySelect.vue'
 import MyInput from "@/Components/UI/MyInput";
+import {mapActions, mapGetters, mapMutations, mapState} from 'vuex'
 export default {
   components: {MyInput, PostList, PostForm, MyDialog, MySelect, MyPagination },
   data(){
     return{
-      posts:[],
       dialogVisible: false,
-      loading: false,
-      selectedSort: '',
-      searchForm: '',
-      sortOptions: [
-        {value: 'title', name: 'По названию'},
-        {value: 'body', name: 'По содержимому'}
-      ],
-      page: 1,
-      limit: 10,
-      totalPage: 0
     }
   },
   methods:{
+    ...mapMutations({
+      setPage: 'post/setPage',
+      setSearcQuery: 'post/setSearchForm',
+      setSelectedSort: 'post/setSelectedSort'
+    }),
+    ...mapActions({
+      loadMorePosts: 'post/loadMorePosts',
+      fetchPosts: 'post/fetchPosts',
+    }),
     createPost(post){
       this.posts.push(post)
       this.dialogVisible = false
 
     },
-    // changePage(pageNum){
-    //   this.page = pageNum
-    // },
+
     removePost(post){
       this.posts = this.posts.filter(p => p.id !== post.id)
     },
-    async fetchPosts(){
-      try{
-        this.loading = true
-        const res = await axios.get('https://jsonplaceholder.typicode.com/posts', {
-          params:{
-            _page: this.page,
-            _limit: this.limit
-          }
-        })
-        this.totalPage = Math.ceil(res.headers['x-total-count'] / this.limit)
-        this.posts = res.data
-        this.loading = false
-      }catch (e){
-        console.log(e);
-      }
-      // finally{
-      //   this.loading = false
-      // }
-    },
-    async loadMorePosts() {
-      this.page += 1
-      try {
-        const res = await axios.get('https://jsonplaceholder.typicode.com/posts', {
-          params: {
-            _page: this.page,
-            _limit: this.limit
-          }
-        })
-        this.totalPage = Math.ceil(res.headers['x-total-count'] / this.limit)
-        this.posts = [...this.posts, ...res.data]
-      } catch (e) {
-        console.log(e);
-      }
-    }
   },
   computed:{
-    sortedPosts(){
-      return [...this.posts].sort((post1, post2) => {
-        return post1[this.selectedSort]?.localeCompare(post2[this.selectedSort])
-      })
-    },
-    sortedAndSearchedPosts(){
-      return this.sortedPosts.filter(post => {
-        return post.title.toLowerCase().includes(this.searchForm.toLowerCase()) ||  post.body.toLowerCase().includes(this.searchForm.toLowerCase())
-      })
-    }
+    ...mapGetters({
+      sortedPosts: 'post/sortedPosts',
+      sortedAndSearchedPosts: 'post/sortedAndSearchedPosts'
+    }),
+    ...mapState({
+      posts: state => state.post.posts,
+      loading: state => state.post.loading,
+      selectedSort: state => state.post.selectedSort,
+      searchForm: state => state.post.searchForm,
+      page: state => state.post.page,
+      limit: state => state.post.limit,
+      totalPage: state => state.post.totalPage,
+      sortOptions: state => state.post.sortOptions,
+    })
   },
   mounted(){
-    // console.log(this.$refs.observer)
-    // const options = {
-    //
-    //   rootMargin: '0px',
-    //   threshold: 1.0
-    // }
-    // const callback = (entries, observer) => {
-    //   if (entries[0].isIntersecting && this.page < this.totalPage ){
-    //     this.loadMorePosts()
-    //   }
-    // };
-    // const observer = new IntersectionObserver(callback, options);
-    // observer.observe(this.$refs.observer)
-    setTimeout(() => {
-      this.dialogVisible = true
-    }, 5000)
+    // setTimeout(() => {
+    //   this.dialogVisible = true
+    // }, 5000)
     this.fetchPosts()
-  },
-  watch: {
-    // page(){
-    //   this.fetchPosts()
-    // }
   },
 }
 </script>

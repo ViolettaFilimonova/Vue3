@@ -1,20 +1,13 @@
 <template>
-  <my-dialog v-model:show="dialogVisible">
-    <post-form @createP="createPost"/>
-  </my-dialog>
   <div class="wrapper">
     <div v-if="!loading">
-      <my-input v-focus :model-value="searchForm" @update:model-value="setSearcQuery" placeholder="Поиск..."/>
+      <my-input v-focus  v-model="searchQuery" placeholder="Поиск..."/>
       <div class="app__buttons">
-        <post-form @createP="createPost"/>
-        <my-select class="app__select" :options="sortOptions" :model-value="selectedSort" @update:model-value="setSelectedSort"/>
+        <post-form />
+        <my-select class="app__select" :options="sortOptions"  v-model="selectedSort"/>
       </div>
-      <post-list :posts="sortedAndSearchedPosts" @remove="removePost"/>
+      <post-list :posts="sortedAndSearchedPosts" />
     </div>
-    <div class="main" v-else >
-      <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-    </div>
-    <div v-intersection="loadMorePosts" class="observer"></div>
   </div>
 </template>
 <script>
@@ -25,54 +18,28 @@ import MyDialog from "@/Components/UI/MyDialog.vue";
 import MySelect from '@/Components/UI/MySelect.vue'
 import MyInput from "@/Components/UI/MyInput";
 import {mapActions, mapGetters, mapMutations, mapState} from 'vuex'
+import {ref} from 'vue'
+import {usePosts} from "@/hooks/usePosts";
+import useSortedAndSearchPosts from "@/hooks/useSortedAndSearchPosts";
+import useSortedPosts from "@/hooks/useSortedPosts";
 export default {
   components: {MyInput, PostList, PostForm, MyDialog, MySelect, MyPagination },
   data(){
     return{
       dialogVisible: false,
+      sortOptions: [
+        {value: 'title', name: 'По названию'},
+        {value: 'body', name: 'По одержимому'}
+      ]
     }
   },
-  methods:{
-    ...mapMutations({
-      setPage: 'post/setPage',
-      setSearcQuery: 'post/setSearchForm',
-      setSelectedSort: 'post/setSelectedSort'
-    }),
-    ...mapActions({
-      loadMorePosts: 'post/loadMorePosts',
-      fetchPosts: 'post/fetchPosts',
-    }),
-    createPost(post){
-      this.posts.push(post)
-      this.dialogVisible = false
-
-    },
-
-    removePost(post){
-      this.posts = this.posts.filter(p => p.id !== post.id)
-    },
-  },
-  computed:{
-    ...mapGetters({
-      sortedPosts: 'post/sortedPosts',
-      sortedAndSearchedPosts: 'post/sortedAndSearchedPosts'
-    }),
-    ...mapState({
-      posts: state => state.post.posts,
-      loading: state => state.post.loading,
-      selectedSort: state => state.post.selectedSort,
-      searchForm: state => state.post.searchForm,
-      page: state => state.post.page,
-      limit: state => state.post.limit,
-      totalPage: state => state.post.totalPage,
-      sortOptions: state => state.post.sortOptions,
-    })
-  },
-  mounted(){
-    // setTimeout(() => {
-    //   this.dialogVisible = true
-    // }, 5000)
-    this.fetchPosts()
+  setup(props){
+    const {posts, totalPage, loading} = usePosts(10)
+    const {sortedPosts,selectedSort} = useSortedPosts(posts)
+    const {searchQuery,sortedAndSearchedPosts} = useSortedAndSearchPosts(sortedPosts)
+    return{
+        loading,totalPage,posts,selectedSort,searchQuery,sortedAndSearchedPosts,sortedPosts
+      }
   },
 }
 </script>

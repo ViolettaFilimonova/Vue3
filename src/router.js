@@ -5,6 +5,7 @@ const router = createRouter({
     routes: [
         { path: '/', component: () => import('../src/Components/PostsView') },
         { path: '/posts/:id', component: () => import('../src/Components/IdPost') },
+        { path: '/composition', component: () => import('../src/pages/PostPageCompositionApi') },
     ],
 })
 export default router
